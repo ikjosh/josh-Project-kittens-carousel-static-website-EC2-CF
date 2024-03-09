@@ -1,9 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: |
-  Web Server of StackName
+  This is the web server for Kittens Carusel project. 
   
 Parameters:
-  
+  mySG:
+    Description: Allows SSH and HTTP
+    Type: AWS::EC2::SecurityGroup::GroupName
+
+  myKeyPair:
+    Description: Select keypair of your choice
+    Type: AWS::EC2::KeyPair::KeyName
 
   
 Mappings:
@@ -15,23 +21,23 @@ Resources:
     Properties:
       ImageId: ami-023eb5c021738c6d0
       InstanceType:  # To add
-      KeyName: "String"   # To add
+      KeyName: !Ref myKeyPair   # To add
       SecurityGroupIds:    # To add
-        SecurityGroupIds
+        - !Ref mySG
       Tags: 
-        - Name: Webserver
-      Tenancy: "String"
+        - Key: Name 
+          Value: Webserver
       UserData: 
         Fn::Base64: |
         #!/bin/bash
         dnf update -y 
         dnf install httpd git -y 
         cd /home/ec2-user
-        git clone 
-
-        
-
-  
+        git clone https://github.com/ikjosh/josh-Project-kittens-carousel-static-website-EC2-CF.git app 
+        cd app
+        cp /home/ec2-user/app/static-web/* /var/www/html
+        systemctl start httpd
+        systemctl enable httpd
 
   
 Outputs:
